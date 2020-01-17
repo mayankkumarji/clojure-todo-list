@@ -1,0 +1,23 @@
+[{:db/id #db/id[:db.part/db]
+  :db/ident :todo/title
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "A todo's title"
+ ;; explicit install
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id[:db.part/db]
+  :db/ident :todo/description
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "A todo's description"
+;; explicit install
+  :db.install/_attribute :db.part/db}
+
+ {:db/id #db/id[:db.part/db]
+  :db/ident :todo/checked
+  :db/valueType :db.type/boolean
+  :db/cardinality :db.cardinality/one
+  :db/doc "checked status for todo"
+ ;; explicit install
+  :db.install/_attribute :db.part/db}]

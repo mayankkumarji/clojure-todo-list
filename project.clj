@@ -6,11 +6,14 @@
   :dependencies [[org.clojure/clojure "1.10.0"]
                  [ring "1.8.0"]
                  [compojure "1.6.1"]
+                 [com.datomic/datomic-free "0.9.5697"]
                  [org.clojure/java.jdbc "0.7.11"]
                  [org.postgresql/postgresql "42.2.9"]
                  [hiccup "1.0.5"]]
   :repl-options {:init-ns todo.core}
   :main todo.core
-
+  :datomic {:schemas ["resources/datomic" ["schema.edn"]]}
   :profiles {:dev
-             {:main todo.core/-dev-main}})
+             {:main todo.core/-dev-main
+              :datomic {:config "resources/datomic/free-transactor-template.properties"
+                        :db-uri "datomic:free://localhost:4334/todo"}}})

@@ -1,9 +1,13 @@
 (ns todo.core
 (:require [todo.item.model :as items]
           [todo.item.handler :refer [handle-index-items
-                                       handle-create-item
-                                       handle-delete-item
-                                       handle-update-item]])
+                                     handle-create-item
+                                     handle-delete-item
+                                     handle-update-item]]
+          [todo.item.handler_datomic :refer [handle-todos-list
+                                     handle-create-todo
+                                     handle-get-todo]])
+(:require [datomic.api :as d])
 (:require [ring.adapter.jetty :as jetty]
           [ring.middleware.reload :refer [wrap-reload]]
           [ring.middleware.params :refer [wrap-params]]
@@ -14,7 +18,20 @@
           [ring.handler.dump :refer [handle-dump]]))
 
 
+(def uri "datomic:free://localhost:4334/todo")
+
+(defn create-empty-in-memory-db []
+(let [uri "datomic:free://localhost:4334/todo"]
+  (d/delete-database uri)
+  (d/create-database uri)
+  (let [conn (d/connect uri)
+        schema (load-file "resources/datomic/schema.edn")]
+    (d/transact conn schema)
+    conn)))
+
+(def conn (d/connect uri))
 (def db "jdbc:postgresql://localhost/todo?user=postgres&password=postgres")
+(create-empty-in-memory-db)
 
 (defn greet [req]
 
@@ -87,7 +104,10 @@
 (POST "/items" [] handle-create-item)
 (DELETE "/items/:item-id" [] handle-delete-item)
 (PUT "/items/:item-id" [] handle-update-item)
-(not-found "Page not found."))
+(not-found "Page not found.")
+(GET "/todo" [] handle-todos-list)
+(GET "/todo/:todo-id" [] handle-get-todo)
+(POST "/todo" [] handle-create-todo))
 
 (defn wrap-db [hdlr]
 (fn [req]
